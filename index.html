@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>3d chess</title>
+    <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+    
+    <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+    <style>
+    body {
+      background: #eee;
+      margin: 50px auto;
+      width: 800px;
+    }
+    .cell {
+      cursor: pointer;
+      color: #222;
+      background: #fff;
+      border: 1px solid #999;
+      font-size: 12px;
+      font-weight: bold;
+      margin: 5px;
+      padding: 0;
+      vertical-align: middle;
+      text-align: center;
+      line-height: 50px;
+      height: 50px;
+      width: 50px;
+      display: inline-block;
+    }
+    .cell.inverted {
+      background: #222;
+      color: #eee;
+    }
+    .cell.available {
+      background: yellow;
+    }
+    .cell.hover {
+      /*background: #999;*/
+      box-shadow: 0 0 25px #0000ffaa;
+    }
+    .cell.selected {
+      background: green;
+    }
+    .flatboard {
+      margin-bottom: 20px;
+    }
+    </style
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="text/babel">
+      var store = (function() {
+        function startingBoard() {
+          return [
+            [
+              ["", "", "", "" ],
+              ["", "", "", "" ],
+              ["", "", "", "" ],
+              ["", "", "", "" ]
+            ],
+            [
+              ["", "", "", "" ],
+              ["", "", "", "" ],
+              ["", "", "", "" ],
+              ["", "", "", "" ]
+            ],
+            [
+              ["", "", "", "" ],
+              ["", "", "", "" ],
+              ["", "R","", "" ],
+              ["", "", "B","B"]
+            ],
+            [
+              ["", "", "", "" ],
+              ["", "", "", "" ],
+              ["", "", "", "" ],
+              ["", "", "", "" ]
+            ]
+          ];
+        }
+        var watcher = null;
+        var state = {board: startingBoard(), mouse: null, selected: null};
+        function registerWatcher(x) {
+          watcher = x;
+        }
+        function getState() {
+          updateAvailableCells();
+          return state;
+        }
+        function setMousePosition(x,y,z) {
+          state.mouse = {x:x, y:y, z:z};
+          watcher();
+        }
+        function clearMouse() {
+          state.mouse = null;
+          watcher();
+        }
+        function selectCell(x,y,z) {
+          if (state.selected === null && state.board[z][y][x] != "") 
+            state.selected = {x:x, y:y, z:z};
+          else if (state.selected !== null) {
+            if (state.selected.x === x && state.selected.y === y && state.selected.z === z)
+              state.selected = null
+            else if (state.available[z][y][x]) {
+              state.board[z][y][x] = state.board[state.selected.z][state.selected.y][state.selected.x];
+              state.board[state.selected.z][state.selected.y][state.selected.x] = "";
+              state.selected = {x:x, y:y, z:z};
+            }
+          }
+          watcher();
+        }
+        function updateAvailableCells() {
+          if (state.selected === null)
+            state.available = state.board.map(function(z){
+              return z.map(function(y){
+                return y.map(function(x){
+                  return false;
+                });
+              });
+            });
+          else
+            state.available = state.board.map(function(z, zi){
+              return z.map(function(y, yi){
+                return y.map(function(x, xi){
+                  if (state.board[state.selected.z][state.selected.y][state.selected.x] === "R")
+                    return ((state.selected.x === xi) + (state.selected.y === yi) + (state.selected.z === zi)) >= 2;
+                  if (state.board[state.selected.z][state.selected.y][state.selected.x] === "B") {
+                    var xDelta = state.selected.x - xi;
+                    var yDelta = state.selected.y - yi;
+                    var zDelta = state.selected.z - zi;
+                    var canMoveInZ = zDelta === 0 && (xDelta == yDelta || xDelta == -1 * yDelta);
+                    var canMoveInY = yDelta === 0 && (xDelta == zDelta || xDelta == -1 * zDelta);
+                    var canMoveInX = xDelta === 0 && (yDelta == zDelta || yDelta == -1 * zDelta);
+                    return canMoveInZ || canMoveInY || canMoveInX;
+                  }
+                });
+              });
+            });
+        }
+        function setBoard(newBoard) {
+          state.board = newBoard;
+          watcher();
+        }
+        return {
+          registerWatcher: registerWatcher,
+          getState: getState,
+          setMousePosition: setMousePosition,
+          clearMouse: clearMouse,
+          selectCell: selectCell,
+          //debug only
+          setBoard: setBoard
+        };
+      })();
+      var Cell = function(props) {
+        function mouseOver() {
+          store.setMousePosition(props.x,props.y,props.z);
+        }
+        function mouseOut() {
+          store.clearMouse();
+        }
+        function mouseClick() {
+          store.selectCell(props.x,props.y,props.z);
+        }
+        var isMouseOver = props.mouse !== null && props.mouse.x === props.x && props.mouse.y === props.y && props.mouse.z === props.z;
+        var isSelected = props.selected !== null && props.selected.x === props.x && props.selected.y === props.y && props.selected.z === props.z;
+        var isAvailable = props.available[props.z][props.y][props.x];
+        var isInverted = (props.x+props.y+props.z) % 2 === 0;
+        var className = "cell" + (isInverted ? " inverted" : "")
+                               + (isMouseOver ? " hover" : "")
+                               + (isSelected ? " selected" : "")
+                               + (isAvailable ? " available" : "");
+        return <div className={className} onMouseOver={mouseOver} onMouseOut={mouseOut} onClick={mouseClick}>{props.data} </div>;
+      }
+      var Row = function(props) {
+        var cells = props.data.map((cell, x) => <Cell available={props.available} selected={props.selected} mouse={props.mouse} data={cell} z={props.z} y={props.y} x={x} key={x}/>);
+        return <div>
+          {cells}
+        </div>
+      }
+      var FlatBoard = function(props) {
+        var rows = props.data.map((row, y) => <Row available={props.available} selected={props.selected} mouse={props.mouse} data={row} z={props.z} y={y} key={y}/>);
+        return <div className="flatboard">
+          {rows}
+        </div>
+      }
+      var Board = function(props) {
+        var boards = props.data.board.map((flatBoard, z) => <FlatBoard available={props.data.available} selected={props.data.selected} mouse={props.data.mouse} data={flatBoard} z={z} key={z}/>);
+        return <div>
+          {boards}
+        </div>
+      }
+      class Game extends React.Component {
+        constructor(props) {
+          super(props);
+          this.state = store.getState();
+          store.registerWatcher(this.onUpdate.bind(this));
+        }
+        onUpdate() {
+          this.setState(store.getState());
+        }
+        render() {
+          return <Board data={this.state} />
+        }
+      }
+      ReactDOM.render(
+        <div>
+          <h1>3d chess</h1>
+          <Game />
+        </div>,
+        document.getElementById('root')
+      );
+      console.log("store.setBoard(" + JSON.stringify(store.getState().board) + ");");
+    </script>
+  </body>
+</html>
