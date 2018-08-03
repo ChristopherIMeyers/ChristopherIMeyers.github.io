@@ -13,6 +13,14 @@
       margin: 50px auto;
       width: 800px;
     }
+
+    .flatboard {
+      border: 2px solid black;
+      display: inline-block;
+      margin-bottom: 20px;
+    }
+
+
     .cell {
       cursor: pointer;
 
@@ -53,11 +61,6 @@
     }
 
 
-
-
-    .flatboard {
-      margin-bottom: 20px;
-    }
 
     </style
   </head>
@@ -373,8 +376,10 @@
 
       var FlatBoard = function(props) {
         var rows = props.data.map((row, y) => <Row available={props.available} selected={props.selected} mouse={props.mouse} data={row} z={props.z} y={y} key={y}/>);
-        return <div className="flatboard">
-          {rows}
+        return <div>
+          <div className="flatboard">
+            {rows}
+          </div>
         </div>
       }
 
