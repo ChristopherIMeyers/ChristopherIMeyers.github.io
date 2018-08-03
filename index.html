@@ -75,6 +75,12 @@
         function smallBoard() {
           return [
             [
+              ["R","N","B","R"],
+              ["", "", "", "" ],
+              ["", "", "", "" ],
+              ["", "", "", "" ]
+            ],
+            [
               ["", "", "", "" ],
               ["", "", "", "" ],
               ["", "", "", "" ],
@@ -89,14 +95,8 @@
             [
               ["", "", "", "" ],
               ["", "", "", "" ],
-              ["", "R","", "" ],
-              ["", "", "B","B"]
-            ],
-            [
               ["", "", "", "" ],
-              ["", "", "", "" ],
-              ["", "", "", "" ],
-              ["", "", "", "" ]
+              ["R","N","B","R"]
             ],
           ];
         }
@@ -104,7 +104,7 @@
         function mediumBoard() {
           return [
             [
-              ["", "", "", "", "", "" ],
+              ["R","N","B","R","", "" ],
               ["", "", "", "", "", "" ],
               ["", "", "", "", "", "" ],
               ["", "", "", "", "", "" ],
@@ -157,7 +157,7 @@
         function largeBoard() {
           return [
             [
-              ["", "", "", "", "", "", "", "" ],
+              ["R","N","B","R","", "", "", "" ],
               ["", "", "", "", "", "", "", "" ],
               ["", "", "", "", "", "", "", "" ],
               ["", "", "", "", "", "", "", "" ],
@@ -301,6 +301,17 @@
                     var canMoveInX = xDelta === 0 && (yDelta == zDelta || yDelta == -1 * zDelta);
 
                     return canMoveInZ || canMoveInY || canMoveInX;
+                  }
+                  if (state.board[state.selected.z][state.selected.y][state.selected.x] === "N") {
+                    var xDelta = Math.abs(state.selected.x - xi);
+                    var yDelta = Math.abs(state.selected.y - yi);
+                    var zDelta = Math.abs(state.selected.z - zi);
+
+                    var delta0 = (xDelta == 0) + (yDelta == 0) + (zDelta == 0);
+                    var delta1 = (xDelta == 1) + (yDelta == 1) + (zDelta == 1);
+                    var delta2 = (xDelta == 2) + (yDelta == 2) + (zDelta == 2);
+
+                    return delta0 == 1 && delta1 == 1 && delta2 == 1;
                   }
                 });
               });
