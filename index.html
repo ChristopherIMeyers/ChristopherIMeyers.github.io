@@ -293,7 +293,7 @@
                     var yDelta = Math.abs(state.selected.y - yi);
                     var zDelta = Math.abs(state.selected.z - zi);
                   if (state.board[state.selected.z][state.selected.y][state.selected.x] === "R")
-                    return ((state.selected.x === xi) + (state.selected.y === yi) + (state.selected.z === zi)) >= 2;
+                    return ((xDelta == 0) + (yDelta == 0) + (zDelta == 0)) >= 2;
                   if (state.board[state.selected.z][state.selected.y][state.selected.x] === "B") {
                     var canMoveInZ = zDelta === 0 && xDelta == yDelta;
                     var canMoveInY = yDelta === 0 && xDelta == zDelta;
