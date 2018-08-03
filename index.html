@@ -292,13 +292,13 @@
                   if (state.board[state.selected.z][state.selected.y][state.selected.x] === "R")
                     return ((state.selected.x === xi) + (state.selected.y === yi) + (state.selected.z === zi)) >= 2;
                   if (state.board[state.selected.z][state.selected.y][state.selected.x] === "B") {
-                    var xDelta = state.selected.x - xi;
-                    var yDelta = state.selected.y - yi;
-                    var zDelta = state.selected.z - zi;
+                    var xDelta = Math.abs(state.selected.x - xi);
+                    var yDelta = Math.abs(state.selected.y - yi);
+                    var zDelta = Math.abs(state.selected.z - zi);
 
-                    var canMoveInZ = zDelta === 0 && (xDelta == yDelta || xDelta == -1 * yDelta);
-                    var canMoveInY = yDelta === 0 && (xDelta == zDelta || xDelta == -1 * zDelta);
-                    var canMoveInX = xDelta === 0 && (yDelta == zDelta || yDelta == -1 * zDelta);
+                    var canMoveInZ = zDelta === 0 && xDelta == yDelta;
+                    var canMoveInY = yDelta === 0 && xDelta == zDelta;
+                    var canMoveInX = xDelta === 0 && yDelta == zDelta;
 
                     return canMoveInZ || canMoveInY || canMoveInX;
                   }
