@@ -75,7 +75,7 @@
         function smallBoard() {
           return [
             [
-              ["R","N","B","R"],
+              ["R","N","B","Q"],
               ["", "", "", "" ],
               ["", "", "", "" ],
               ["", "", "", "" ]
@@ -96,7 +96,7 @@
               ["", "", "", "" ],
               ["", "", "", "" ],
               ["", "", "", "" ],
-              ["R","N","B","R"]
+              ["R","N","B","Q"]
             ],
           ];
         }
@@ -104,7 +104,7 @@
         function mediumBoard() {
           return [
             [
-              ["R","N","B","R","", "" ],
+              ["R","N","B","R","Q","" ],
               ["", "", "", "", "", "" ],
               ["", "", "", "", "", "" ],
               ["", "", "", "", "", "" ],
@@ -157,7 +157,7 @@
         function largeBoard() {
           return [
             [
-              ["R","N","B","R","", "", "", "" ],
+              ["R","N","B","R","Q","", "", "" ],
               ["", "", "", "", "", "", "", "" ],
               ["", "", "", "", "", "", "", "" ],
               ["", "", "", "", "", "", "", "" ],
@@ -292,15 +292,18 @@
                     var xDelta = Math.abs(state.selected.x - xi);
                     var yDelta = Math.abs(state.selected.y - yi);
                     var zDelta = Math.abs(state.selected.z - zi);
-                  if (state.board[state.selected.z][state.selected.y][state.selected.x] === "R")
-                    return ((xDelta == 0) + (yDelta == 0) + (zDelta == 0)) >= 2;
-                  if (state.board[state.selected.z][state.selected.y][state.selected.x] === "B") {
-                    var canMoveInZ = zDelta === 0 && xDelta == yDelta;
-                    var canMoveInY = yDelta === 0 && xDelta == zDelta;
-                    var canMoveInX = xDelta === 0 && yDelta == zDelta;
+                    var canMoveLikeRook = ((xDelta == 0) + (yDelta == 0) + (zDelta == 0)) >= 2;
 
-                    return canMoveInZ || canMoveInY || canMoveInX;
-                  }
+                    var canMoveDInZ = zDelta === 0 && xDelta == yDelta;
+                    var canMoveDInY = yDelta === 0 && xDelta == zDelta;
+                    var canMoveDInX = xDelta === 0 && yDelta == zDelta;
+
+                    var canMoveLikeBishop = canMoveDInZ || canMoveDInY || canMoveDInX;
+
+                  if (state.board[state.selected.z][state.selected.y][state.selected.x] === "R")
+                    return canMoveLikeRook;
+                  if (state.board[state.selected.z][state.selected.y][state.selected.x] === "B")
+                    return canMoveLikeBishop;
                   if (state.board[state.selected.z][state.selected.y][state.selected.x] === "N") {
                     var delta0 = (xDelta == 0) + (yDelta == 0) + (zDelta == 0);
                     var delta1 = (xDelta == 1) + (yDelta == 1) + (zDelta == 1);
@@ -308,6 +311,8 @@
 
                     return delta0 == 1 && delta1 == 1 && delta2 == 1;
                   }
+                  if (state.board[state.selected.z][state.selected.y][state.selected.x] === "Q")
+                    return canMoveLikeRook || canMoveLikeBishop;
                 });
               });
             });
