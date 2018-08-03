@@ -76,7 +76,7 @@
           return [
             [
               ["R","N","B","Q"],
-              ["", "", "", "" ],
+              ["K", "", "", "" ],
               ["", "", "", "" ],
               ["", "", "", "" ]
             ],
@@ -104,7 +104,7 @@
         function mediumBoard() {
           return [
             [
-              ["R","N","B","R","Q","" ],
+              ["R","N","B","R","Q","K"],
               ["", "", "", "", "", "" ],
               ["", "", "", "", "", "" ],
               ["", "", "", "", "", "" ],
@@ -157,7 +157,7 @@
         function largeBoard() {
           return [
             [
-              ["R","N","B","R","Q","", "", "" ],
+              ["R","N","B","R","Q","K","", "" ],
               ["", "", "", "", "", "", "", "" ],
               ["", "", "", "", "", "", "", "" ],
               ["", "", "", "", "", "", "", "" ],
@@ -313,7 +313,10 @@
                   }
                   if (state.board[state.selected.z][state.selected.y][state.selected.x] === "Q")
                     return canMoveLikeRook || canMoveLikeBishop;
-                    
+
+                  if (state.board[state.selected.z][state.selected.y][state.selected.x] === "K")
+                    return xDelta <= 1 && yDelta <= 1 && zDelta <= 1;
+
                   return false;
                 });
               });
