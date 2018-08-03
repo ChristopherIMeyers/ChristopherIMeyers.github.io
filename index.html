@@ -313,6 +313,8 @@
                   }
                   if (state.board[state.selected.z][state.selected.y][state.selected.x] === "Q")
                     return canMoveLikeRook || canMoveLikeBishop;
+                    
+                  return false;
                 });
               });
             });
