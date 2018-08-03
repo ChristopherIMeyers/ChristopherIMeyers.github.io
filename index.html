@@ -270,7 +270,7 @@
             else if (state.available[z][y][x]) {
               state.board[z][y][x] = state.board[state.selected.z][state.selected.y][state.selected.x];
               state.board[state.selected.z][state.selected.y][state.selected.x] = "";
-              state.selected = {x:x, y:y, z:z};
+              state.selected = null;
             }
           }
           watcher();
