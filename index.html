@@ -289,13 +289,12 @@
             state.available = state.board.map(function(z, zi){
               return z.map(function(y, yi){
                 return y.map(function(x, xi){
-                  if (state.board[state.selected.z][state.selected.y][state.selected.x] === "R")
-                    return ((state.selected.x === xi) + (state.selected.y === yi) + (state.selected.z === zi)) >= 2;
-                  if (state.board[state.selected.z][state.selected.y][state.selected.x] === "B") {
                     var xDelta = Math.abs(state.selected.x - xi);
                     var yDelta = Math.abs(state.selected.y - yi);
                     var zDelta = Math.abs(state.selected.z - zi);
-
+                  if (state.board[state.selected.z][state.selected.y][state.selected.x] === "R")
+                    return ((state.selected.x === xi) + (state.selected.y === yi) + (state.selected.z === zi)) >= 2;
+                  if (state.board[state.selected.z][state.selected.y][state.selected.x] === "B") {
                     var canMoveInZ = zDelta === 0 && xDelta == yDelta;
                     var canMoveInY = yDelta === 0 && xDelta == zDelta;
                     var canMoveInX = xDelta === 0 && yDelta == zDelta;
@@ -303,10 +302,6 @@
                     return canMoveInZ || canMoveInY || canMoveInX;
                   }
                   if (state.board[state.selected.z][state.selected.y][state.selected.x] === "N") {
-                    var xDelta = Math.abs(state.selected.x - xi);
-                    var yDelta = Math.abs(state.selected.y - yi);
-                    var zDelta = Math.abs(state.selected.z - zi);
-
                     var delta0 = (xDelta == 0) + (yDelta == 0) + (zDelta == 0);
                     var delta1 = (xDelta == 1) + (yDelta == 1) + (zDelta == 1);
                     var delta2 = (xDelta == 2) + (yDelta == 2) + (zDelta == 2);
